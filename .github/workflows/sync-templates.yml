@@ -1,7 +1,7 @@
 name: Sync app templates
 
-# Each app keeps its Unraid template in its own repository; this one, registered with
-# Community Applications, copies them in. A template is only taken when it is valid and its
+# NetLens keeps its Unraid template in its own repository (unraid/netlens.xml); this one,
+# registered with Community Applications, copies it in. (pia-qbittorrent.xml is edited here.) A template is only taken when it is valid and its
 # TemplateURL already points here, so an outdated copy can never replace the one CA reads.
 
 on:
@@ -44,7 +44,7 @@ jobs:
           PY
           }
           fetch netlens.xml https://raw.githubusercontent.com/GeorgeAL78/netlens/main/unraid/netlens.xml
-          fetch pia-qbittorrent.xml https://raw.githubusercontent.com/GeorgeAL78/pia-qbittorrent-docker/master/pia-qbittorrent.xml
+          # pia-qbittorrent.xml is edited here; pia-qbittorrent-docker copies it from this repo.
 
       - name: Commit if changed
         run: |

@@ -10,8 +10,12 @@ this repository; each app keeps its own code, documentation and issue tracker in
 
 `ca_profile.xml` is the repository's profile in Community Applications.
 
-Each app keeps its template in its own repository (`unraid/netlens.xml` in NetLens,
-`pia-qbittorrent.xml` in pia-qbittorrent-docker); `.github/workflows/sync-templates.yml` copies
-them here every 6 hours, but only a valid template whose `TemplateURL` points at this repository.
+Where each template is edited:
+
+- `pia-qbittorrent.xml` — here. pia-qbittorrent-docker copies it from this repository, so
+  installs that still point at its old address get the same file.
+- `netlens.xml` — in NetLens (`unraid/netlens.xml`); `.github/workflows/sync-templates.yml`
+  copies it here every 6 hours, but only a valid template whose `TemplateURL` points at this
+  repository.
 
 Support: open an issue on the app's own repository, not here.
