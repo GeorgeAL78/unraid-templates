@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>pia-qbittorrent</Name>
+  <Repository>gjergjk/pia-qbittorrent</Repository>
+  <Registry>https://hub.docker.com/r/gjergjk/pia-qbittorrent</Registry>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Network>bridge</Network>
+  <Support>https://github.com/GeorgeAL78/pia-qbittorrent-docker/issues</Support>
+  <Project>https://github.com/GeorgeAL78/pia-qbittorrent-docker</Project>
+  <Overview>qBittorrent 5.2.4 combined with Private Internet Access (PIA) VPN, built on Alpine Linux for a minimal footprint.&#13;&#10;&#13;&#10;Features:
+• Your real IP stays hidden - if the VPN drops, the container loses its internet
+• It fixes itself - spots a VPN that has stopped working, even if it still looks connected
+• A dead PIA server is not your problem - it moves to another one nearby, and your forwarded port moves with it&#13;&#10;• Keeps up with PIA - the server list refreshes on every container start, so it still works when PIA moves a region
+• Faster seeding - PIA port forwarding is set up for you, where your region supports it&#13;&#10;• Port forwarding keeps trying - if PIA cannot give you a port at startup, it retries in the background and switches qBittorrent over once it works, with no restart
+• Downloads survive updates - progress is saved on shutdown, so nothing re-checks
+• Files land with the right owner, so they are readable on Unraid without fixing permissions
+• Your PIA login can stay in a protected file instead of the container settings
+• Runs on amd64 and arm64
+
+Components:&#13;&#10;• qBittorrent 5.2.4 with libtorrent 2.0.15&#13;&#10;• Alpine Linux 3.24, Boost 1.92.0&#13;&#10;• OpenVPN 2.7.7, WireGuard 1.0.20260223, iptables 1.8.13&#13;&#10;&#13;&#10;Full feature and configuration details: https://github.com/GeorgeAL78/pia-qbittorrent-docker
+
+Custom bridge networks work fine (the VPN tunnel runs inside the container either way). Avoid Host networking: the container would then share the Unraid server's own network stack, so the kill switch's firewall rules, routes and IPv6 settings would be applied to the server — including flushing the iptables rules Docker itself relies on, which breaks networking for other containers.&#13;&#10;&#13;&#10;Extra Parameters must keep --cap-add=NET_ADMIN (the VPN and kill switch need it) and --restart unless-stopped (lets the container restart itself to recover).&#13;&#10;&#13;&#10;Pair with the Windows 11 desktop app: https://github.com/GeorgeAL78/qbittorrent-desktop&#13;&#10;&#13;&#10;Fork of j4ym0/pia-qbittorrent with bug fixes and extra features.</Overview>
+  <Category>Downloaders:</Category>
+  <WebUI>http://[IP]:[PORT:8888]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/GeorgeAL78/unraid-templates/main/pia-qbittorrent.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/GeorgeAL78/pia-qbittorrent-docker/master/readme/icon.png</Icon>
+  <ExtraParams>--cap-add=NET_ADMIN --restart unless-stopped</ExtraParams>
+  <Config Name="Web UI Port" Target="8888" Default="8888" Mode="tcp" Description="qBittorrent Web UI port" Type="Port" Display="always" Required="true" Mask="false">8888</Config>
+  <Config Name="Downloads" Target="/downloads" Default="/mnt/user/downloads/" Mode="rw" Description="Download directory" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/downloads/</Config>
+  <Config Name="Config" Target="/config" Default="/mnt/user/appdata/pia-qbittorrent/" Mode="rw" Description="qBittorrent config and profiles" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pia-qbittorrent/</Config>
+  <Config Name="PIA Username" Target="PIA_USERNAME" Default="" Mode="" Description="Your PIA account username" Type="Variable" Display="always" Required="true" Mask="false"></Config>
+  <Config Name="PIA Password" Target="PIA_PASSWORD" Default="" Mode="" Description="Your PIA account password" Type="Variable" Display="always" Required="true" Mask="true"></Config>
+  <Config Name="PIA Region" Target="PIA_REGION" Default="netherlands" Mode="" Description="VPN region e.g. ca_montreal, us_new_york" Type="Variable" Display="always" Required="true" Mask="false">netherlands</Config>
+  <Config Name="VPN Client" Target="VPN_CLIENT" Default="wireguard|openvpn" Mode="" Description="VPN client: wireguard or openvpn" Type="Variable" Display="always" Required="true" Mask="false">wireguard</Config>
+  <Config Name="Port Forwarding" Target="PORT_FORWARDING" Default="true|false" Mode="" Description="Enable PIA port forwarding for better seeding. Falls back gracefully if your region does not support it (e.g. US)" Type="Variable" Display="always" Required="false" Mask="false">true</Config>
+  <Config Name="UID" Target="UID" Default="99" Mode="" Description="User ID for qBittorrent process. Use 99 for Unraid nobody" Type="Variable" Display="always" Required="false" Mask="false">99</Config>
+  <Config Name="GID" Target="GID" Default="100" Mode="" Description="Group ID for qBittorrent process. Use 100 for Unraid users" Type="Variable" Display="always" Required="false" Mask="false">100</Config>
+  <Config Name="UMASK" Target="UMASK" Default="000" Mode="" Description="Umask for downloads. 000=fully open (recommended for Unraid), 002=group-writable, 022=owner only" Type="Variable" Display="always" Required="false" Mask="false">000</Config>
+  <Config Name="Web UI Port Variable" Target="WEBUI_PORT" Default="8888" Mode="" Description="Must match the port mapping above" Type="Variable" Display="advanced" Required="false" Mask="false">8888</Config>
+  <Config Name="Web UI Interfaces" Target="WEBUI_INTERFACES" Default="" Mode="" Description="Comma-separated network interfaces for Web UI access e.g. eth0,eth1 (defaults to the VPN's physical interface)" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Host Header Validation" Target="HOSTHEADERVALIDATION" Default="true|false" Mode="" Description="Set to false if having trouble accessing the WebUI (e.g. behind a reverse proxy)" Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="CSRF Protection" Target="CSRFPROTECTION" Default="true|false" Mode="" Description="Set to false if having trouble accessing the WebUI (e.g. behind a reverse proxy)" Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="DNS Servers" Target="DNS_SERVERS" Default="9.9.9.9,149.112.112.112" Mode="" Description="Comma-separated DNS servers" Type="Variable" Display="advanced" Required="false" Mask="false">9.9.9.9,149.112.112.112</Config>
+  <Config Name="Legacy IPTables" Target="LEGACY_IPTABLES" Default="false|true" Mode="" Description="Use legacy iptables instead of nftables" Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Timezone" Target="TZ" Default="" Mode="" Description="Timezone e.g. America/New_York" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Extra Subnets" Target="EXTRA_SUBNETS" Default="" Mode="" Description="Comma-separated extra subnets allowed through the kill switch. Use this if your *arr apps or reverse proxy are on a different Docker network and cannot reach qBittorrent e.g. 172.18.0.0/16" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Extra LAN Ports" Target="OPEN_ADDITIONAL_LOCAL_PORTS" Default="" Mode="" Description="Comma-separated extra LAN ports to open e.g. 8989,7878. Use this for containers routed through this one (network_mode: container:...) whose web UI would otherwise be blocked by the kill switch" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Allow Local Subnet Traffic" Target="ALLOW_LOCAL_SUBNET_TRAFFIC" Default="false|true" Mode="" Description="Set to true to allow LAN devices to connect directly to the container" Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+</Container>
