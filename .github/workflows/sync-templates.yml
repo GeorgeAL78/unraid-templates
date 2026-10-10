@@ -1,0 +1,59 @@
+name: Sync app templates
+
+# Each app keeps its Unraid template in its own repository; this one, registered with
+# Community Applications, copies them in. A template is only taken when it is valid and its
+# TemplateURL already points here, so an outdated copy can never replace the one CA reads.
+
+on:
+  schedule:
+    - cron: '41 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-templates
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch templates
+        run: |
+          fetch() {  # <file> <source url>
+            curl -fsSL --retry 3 --max-time 30 "$2" -o "/tmp/$1" || { echo "::warning::could not fetch $1"; return 0; }
+            python3 - "/tmp/$1" "$1" <<'PY'
+          import sys, shutil, xml.etree.ElementTree as ET
+          src, name = sys.argv[1], sys.argv[2]
+          want = "https://raw.githubusercontent.com/GeorgeAL78/unraid-templates/main/" + name
+          try:
+              r = ET.parse(src).getroot()
+          except ET.ParseError as e:
+              print(f"::warning::{name}: not valid XML ({e}), kept the current copy"); sys.exit(0)
+          missing = [k for k in ("Name", "Repository", "TemplateURL") if not (r.findtext(k) or "").strip()]
+          if r.tag != "Container" or missing:
+              print(f"::warning::{name}: not a complete Container template ({missing}), kept the current copy"); sys.exit(0)
+          if (r.findtext("TemplateURL") or "").strip() != want:
+              print(f"::notice::{name}: source TemplateURL is not {want} yet, kept the current copy"); sys.exit(0)
+          shutil.copyfile(src, name)
+          print(f"{name}: valid, copied")
+          PY
+          }
+          fetch netlens.xml https://raw.githubusercontent.com/GeorgeAL78/netlens/main/unraid/netlens.xml
+          fetch pia-qbittorrent.xml https://raw.githubusercontent.com/GeorgeAL78/pia-qbittorrent-docker/master/pia-qbittorrent.xml
+
+      - name: Commit if changed
+        run: |
+          if [ -z "$(git status --porcelain -- '*.xml')" ]; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- '*.xml'
+          git commit -m "Sync app templates"
+          git push
