@@ -35,4 +35,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pia-qbittorrent.xml
           git commit -m "pia-qbittorrent: qBittorrent $qbt"
+          # Another workflow in this repo (sync-templates) may have pushed meanwhile.
+          git pull --rebase
           git push
