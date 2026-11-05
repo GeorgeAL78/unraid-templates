@@ -1,0 +1,38 @@
+name: PIA template versions
+
+# Every 6 hours: updates the version text in pia-qbittorrent.xml to match the latest
+# stable release of GeorgeAL78/pia-qbittorrent-docker. Commits only on change.
+
+on:
+  schedule:
+    - cron: '53 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pia-versions
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Update version text
+        run: python3 scripts/pia-versions.py
+
+      - name: Commit if changed
+        run: |
+          if [ -z "$(git status --porcelain -- pia-qbittorrent.xml)" ]; then
+            echo "No change"
+            exit 0
+          fi
+          qbt=$(sed -n 's/.*qBittorrent \([0-9][0-9A-Za-z.]*\) with libtorrent \([0-9.]*\).*/\1 \/ libtorrent \2/p' pia-qbittorrent.xml | head -1)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pia-qbittorrent.xml
+          git commit -m "pia-qbittorrent: qBittorrent $qbt"
+          git push
