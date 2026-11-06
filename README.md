@@ -7,14 +7,13 @@ this repository; each app keeps its own code, documentation and issue tracker in
 | --- | --- | --- |
 | [`pia-qbittorrent.xml`](pia-qbittorrent.xml) | [pia-qbittorrent-docker](https://github.com/GeorgeAL78/pia-qbittorrent-docker) — qBittorrent behind Private Internet Access | `gjergjk/pia-qbittorrent` |
 | [`netlens.xml`](netlens.xml) | [NetLens](https://github.com/GeorgeAL78/netlens) — a dashboard for UniFi networks | `gjergjk/netlens` |
-| [`pia-iptv.xml`](pia-iptv.xml) | [pia-iptv](https://github.com/GeorgeAL78/pia-iptv) — PIA VPN gateway with kill switch for IPTV | `gjergjk/pia-iptv` |
-| [`m3u-editor-pia-iptv.xml`](m3u-editor-pia-iptv.xml) | [m3u-editor](https://github.com/m3ue/m3u-editor) (by sparkison), preconfigured to run inside pia-iptv | `sparkison/m3u-editor` |
+| [`pia-iptv.xml`](pia-iptv.xml) | [pia-iptv](https://github.com/GeorgeAL78/pia-iptv) — m3u-editor with a built-in PIA VPN, in one container | `gjergjk/pia-iptv` |
 
 `ca_profile.xml` is the repository's profile in Community Applications.
 
 Where each template is edited:
 
-- `pia-iptv.xml`, `m3u-editor-pia-iptv.xml` — in pia-iptv (`unraid/`), copied here by hand on release.
+- `pia-iptv.xml` — in pia-iptv (`unraid/`), copied here by hand on release.
 - `pia-qbittorrent.xml` — here. pia-qbittorrent-docker copies it from this repository, so
   installs that still point at its old address get the same file.
 - `netlens.xml` — in NetLens (`unraid/netlens.xml`); `.github/workflows/sync-templates.yml`
