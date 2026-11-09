@@ -1,6 +1,6 @@
 name: Sync app templates
 
-# NetLens and ShutterLift keep their Unraid templates in their own repositories (unraid/<name>.xml); this one,
+# NetLens and Folder to Google Photos keep their Unraid templates in their own repositories (unraid/<name>.xml); this one,
 # registered with Community Applications, copies them in. (pia-qbittorrent.xml is edited here.) A template is only taken when it is valid and its
 # TemplateURL already points here, so an outdated copy can never replace the one CA reads.
 
@@ -44,7 +44,7 @@ jobs:
           PY
           }
           fetch netlens.xml https://raw.githubusercontent.com/GeorgeAL78/netlens/main/unraid/netlens.xml
-          fetch shutterlift.xml https://raw.githubusercontent.com/GeorgeAL78/shutterlift/main/unraid/shutterlift.xml
+          fetch folder-to-google-photos.xml https://raw.githubusercontent.com/GeorgeAL78/folder-to-google-photos/main/unraid/folder-to-google-photos.xml
           # pia-qbittorrent.xml is edited here; pia-qbittorrent-docker copies it from this repo.
 
       - name: Commit if changed
