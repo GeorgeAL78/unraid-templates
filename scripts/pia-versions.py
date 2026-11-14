@@ -8,7 +8,7 @@ package index (OpenVPN, WireGuard, iptables), rewrites the four strings in the
 Overview, and leaves the file untouched when nothing changed. Prints CHANGED or
 UNCHANGED. Exits non-zero if a string it expects is missing.
 """
-import io, json, re, sys, tarfile, urllib.request
+import io, json, os, re, sys, tarfile, urllib.request
 import xml.etree.ElementTree as ET
 
 SRC = 'GeorgeAL78/pia-qbittorrent-docker'
@@ -17,7 +17,13 @@ PKGS = ('openvpn', 'wireguard-tools', 'iptables')
 
 
 def get(url):
-    req = urllib.request.Request(url, headers={'Accept': 'application/vnd.github+json'})
+    headers = {'Accept': 'application/vnd.github+json'}
+    # Authenticated GitHub API calls: anonymous ones share a 60/hour limit per runner
+    # address and fail with 403 "rate limit exceeded" on busy runners.
+    token = os.environ.get('GITHUB_TOKEN')
+    if token and url.startswith('https://api.github.com/'):
+        headers['Authorization'] = 'Bearer ' + token
+    req = urllib.request.Request(url, headers=headers)
     return urllib.request.urlopen(req, timeout=60).read()
 
 
